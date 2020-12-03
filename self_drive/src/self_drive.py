@@ -14,12 +14,10 @@ class SelfDrive:
         forward_r = self.avg_distance(scan.ranges[0:10])
         forward = self.avg_distance([forward_l, forward_r])
         if (forward < 0.3) and (forward > 0):
-            turtle_vel.linear.x = 0.1
-            turtle_vel.angular.z = -1.5
+            self.go_turn(0.1, -1.5)
            
         else:
-            turtle_vel.linear.x = 0.18
-            turtle_vel.angular.z = 0
+            self.go_turn(0.18, 0)
         self.publisher.publish(turtle_vel)
 
     def avg_distance(self, scan):
@@ -41,6 +39,12 @@ class SelfDrive:
         if avg_dis == 0 :
             avg_dis = self.temp
         return avg_dis
+
+    def go_turn(self, x, z):
+            turtle_vel = Twist()
+            turtle_vel.linear.x = x
+            turtle_vel.angular.z = z
+            self.publisher.publish(turtle_vel)
 
 def main():
     rospy.init_node('self_drive')
