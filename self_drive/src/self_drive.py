@@ -9,17 +9,20 @@ class SelfDrive:
         self.publisher = publisher
 
     def lds_callback(self, scan):
-        turtle_vel = Twist()
         forward_l = self.avg_distance(scan.ranges[350:359])
         forward_r = self.avg_distance(scan.ranges[0:10])
         forward = self.avg_distance([forward_l, forward_r])
+        front_side = self.avg_distance(scan.ranges[30:50])
         if (forward < 0.3) and (forward > 0):
             self.go_turn(0.1, -1.5)
            
         else:
-            self.go_turn(0.18, 0)
-        self.publisher.publish(turtle_vel)
-
+            if (front_side < 0.25) and (front_side > 0):
+                self.go_turn(0.18, -0.5)
+            elif front_side >= 0.25:
+                self.go_turn(0.15, 0.5)
+            else:
+                self.go_turn(0.18, 0)
     def avg_distance(self, scan):
         count = 0
         distance = 0
